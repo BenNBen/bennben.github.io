@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+	<meta charset="utf-8" />
+	<title>Simple Render</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, minimal-ui">
+<meta name="apple-mobile-web-app-capable" content="yes" >
+<style>
+  html, body, div, canvas {
+margin: 8;
+padding: 0;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body bgColor="black" text="white" onload='main()' onresize="resize()">
+<script type="text/javascript">
+</script>
+<div class = "wrapper" style="margin: 0 auto; position: relative;">
+	<canvas id="screen" width="1920" height="1080" style="width: 100%; height: 100%;">
+	Please use a browser that supports "canvas."
+	</canvas>
+</div>
+	<script src="cuon-utils.js"></script>
+	<script src="webgl-debug.js"></script>
+	<script src="webgl-utils.js"></script>
+	<!--Math/Linear Algebra scripts-->
+	<script src="mathf.js"></script>
+	<script src="math/Vector3.js"></script>
+	<script src="math/Quaternion.js"></script>
+	<script src="math/Matrix4x4.js"></script>
+	<script src="camera.js"></script>
+	<script src="frustrum.js"></script>
+	<script src="app.js"></script>
+	<script src="grid.js"></script>
+	<!--geometric meshes-->
+	<script src="./geo/geo.js"></script>
+	<script src="./geo/cylinder.js"></script>
+	<script src="./geo/cube.js"></script>
+	<script src="./geo/cone.js"></script>
+	<script src="./geo/sphere.js"></script>
+	<script src="./geo/capsule.js"></script>
+	<!--custom mesh code-->
+	<script src="./geo/mesh.js"></script>
+	<script src="sprite.js"></script>
+	<script src="main.js"></script>
+</body>
+</html>
