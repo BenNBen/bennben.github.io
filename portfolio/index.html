@@ -13,18 +13,24 @@
 		<script defer src="header.js"></script>
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 	</head>
-	<body class="is-preload dark">
+	<body class="is-preload light">
 		<!-- Wrapper -->
 			<div id="wrapper">
 
 				<!-- Header -->
-					<header id="header">
+					<header id="header">	
+							<label class="switch">
+								<input type="checkbox" id="theme">
+								<span class="slider round">
+								</span>
+							</label>
 						<div class="inner">
 
 							<!-- Logo -->
 								<a href="index.html" class="logo">
 									<span class="symbol"><img src="images/ben.jfif" alt="" /></span><span class="title"></span>
 								</a>
+						
 
 							<!-- Nav -->
 								<!--<nav>
@@ -52,7 +58,26 @@
 								<h1>Hi there! My name is Ben Barriage</h1>
 								<p>I am a self motivated software engineer who has been designing and creating projects with code since 2017. My career began at the Robotics and Computer Vision Laboratory at Fordham University where I worked on the simulated navigation of robots based on an environmental image database.</p>
 								<p>Since then, I have worked primarily on 3D applications using ThreeJS, Unity3D, and a propriety game engine which I assisted in building. Using these tools, I have had the opportunity to work on a variety of projects including a real time 3D collision detection system, a GPU accelerated particle effect module, and a variety of content creation tools for artists/game designers.</p>
+								<p>Frequently used technologies:</p>
 							</header>
+
+							
+									<table>
+										<tr>
+											<div class="techBlock">C++</div>
+											<div class="techBlock">Lua</div>
+										</tr>
+										<tr>
+											<div class="techBlock">Javascript</div>
+											<div class="techBlock">NodeJS</div>
+										</tr>
+										<tr>
+											<div class="techBlock">GLSL / HLSL</div>
+											<div class="techBlock">Typescript</div>
+										</tr>
+									</table>
+								
+
 							<section class="tiles">
 								<article class="style1">
 									<span class="image">
@@ -90,6 +115,17 @@
 										</div>
 									</a>
 								</article>
+								<!--<article class="style1">
+									<span class="image">
+										<img src="images/webgl.gif" alt="" />
+									</span>
+									<a href="../threejs/index.html">
+										<h2>ThreeJS</h2>
+										<div class="content">
+											<p>Demo code showing working knowledge of ThreeJS</p>
+										</div>
+									</a>
+								</article>-->
 								<!--<article class="style1">
 									<span class="image">
 										<img src="images/writer.png" alt="" />
