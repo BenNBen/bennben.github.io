@@ -54,19 +54,13 @@ class App{
         gl.cullFace(gl.FRONT);
         gl.enable(gl.CULL_FACE);
         gl.enable(gl.DEPTH_TEST);
-        gl.clearColor(28/255, 79/255, 110/255, 1.0);		// color gray
+        gl.clearColor(28/255, 79/255, 110/255, 1.0);
 
         this.SetView(gl.drawingBufferWidth, gl.drawingBufferHeight, 0);
         this.viewFrustrum.frustrumFromMatrix(this.modelMatrix.data);
         this.grid.draw(gl, this.projectionMatrix, this.modelMatrix);
-        gl.enable(gl.BLEND);
-        gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-        gl.depthMask(false);
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
-        spriteManager.Draw(gl, this.modelMatrix, this.projectionMatrix);
-        gl.blendFunc(gl.SRC_ALPHA, gl.ONE)
-        gl.disable(gl.BLEND);
-        gl.depthMask(true);
         drawGeometry(this.modelMatrix, this.projectionMatrix);
+        spriteManager.Draw(gl, this.modelMatrix, this.projectionMatrix);
+        gl.depthMask(true);
     }
 }

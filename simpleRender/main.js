@@ -75,7 +75,6 @@ function click(event, id){
   var ratio = screenRatio();
   var x = event.pageX * ratio;
   var y = event.pageY * ratio;
-
   clickX = x;
   clickY = y;
   mouseDown = true;
@@ -87,6 +86,30 @@ function release(event, id){
   mouseDown = false;
 }
 
+function touchMove(event, id){
+  var ratio = screenRatio();
+  let touches = event.touches;
+  var x = touches[0].pageX * ratio;
+  var y = touches[0].pageY * ratio;
+  var deltax = x - clickX;
+  var deltay = y - clickY;
+  var sensitivity = .5;
+  let rot = app.camera.rotation;
+  rot.x += deltay * sensitivity;
+  if (rot.x < 0) {
+    rot.x += 360;
+  } else if (rot.x > 360) {
+    rot.x -= 360;
+  }
+  rot.y += deltax * sensitivity;
+  if (rot.y < 0) {
+    rot.y += 360;
+  } else if (rot.y > 360) {
+    rot.y -= 360;
+  }
+  clickX = x;
+  clickY = y;
+}
 
 function hover(event, id){
   var ratio = screenRatio();
@@ -155,6 +178,7 @@ function addListeners(canvas){
     canvas.addEventListener("mousedown", click, false);
     canvas.addEventListener("mouseup", release, false);
     canvas.addEventListener("mousemove", hover, false);
+    canvas.addEventListener("touchmove", touchMove, false);
     document.addEventListener("keydown", keydown);
 }
 
@@ -400,7 +424,10 @@ function resize() {
 
 const addSprites = (gl) =>{
     for(let i = 0; i < 5; i++){
-        spriteManager.AddDefault(gl, [-2 + i, 10, 1]);
+        let s = spriteManager.AddDefault(gl, [-2 + i, i, 0]);
+        if(i %2 == 0){
+          s.color = [1/i,0,1/i]
+        }
     }
 }
 

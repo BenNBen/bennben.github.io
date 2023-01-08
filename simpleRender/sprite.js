@@ -1,9 +1,10 @@
 DEFAULT_TEXTURE_STRING = 
     `
-let x = 128;
-let y = 128;
-ctx.fillStyle="blue";
-ctx.fillRect(0,0,ctx.width, ctx.height);
+ctx.fillStyle="white";
+ctx.strokeStyle="red";
+ctx.arc(width/2, height/2, Math.floor(width/2), 0, 2 * Math.PI);
+ctx.fill();
+ctx.stroke();
 `;
 
 
@@ -41,6 +42,31 @@ void main (){
     textVarying = uvs;
 }`;
 
+SPRITE_VERTEX_INTERP =
+`precision mediump float;
+uniform mat4 mvpMatrix;
+uniform mat4 mvpMatrix2;
+uniform mat4 mvMatrix;
+uniform vec2 pixelRatio;
+uniform float interpolation;
+
+attribute vec3 position;
+attribute vec2 rotatedCorner;
+attribute vec2 uvs;
+
+varying vec2 textVarying;
+
+void main (){
+    float inverseInterpolation = 1.0 - interpolation;
+    mat4 mvpMat = mvpMatrix * inverseInterpolation + mvMatrix2 * interpolation;
+    vec3 axis1 = vec3(mvMatrix[0][0], mvMatrix[1][0], mvMatrix[2][0]);
+    vec3 axis2 = vec3(mvMatrix[0][1], mvMatrix[1][1], mvMatrix[2][1]);
+    vec3 corner = rotatedCorner.x*axis1*pixelRatio.x + rotatedCorner.y*axis2*pixelRatio.y + position.xyz;
+    vec4 final = vec4(corner,1.0);
+    gl_Position = mvpMat * final;
+    textVarying = uvs;
+}`;
+
 function drawCanvasTexture(contextString, width = 256, height = 256) {
     let ncanvas = document.createElement("canvas");
     let ctx = ncanvas.getContext("2d");
@@ -67,8 +93,11 @@ class SpriteManager{
 
     CreateShader(gl){
         let shader = createProgram(gl, SPRITE_VERTEX, SPRITE_FRAGMENT);
+        let interpShader = createProgram(gl, SPRITE_VERTEX_INTERP, SPRITE_FRAGMENT);
         let locations = {};
         let attributes = {};
+        let interpLocations = {};
+        let interpAttributes = {};
 
         attributes.uvs = gl.getAttribLocation(shader, "uvs");
         attributes.spriteCorners = gl.getAttribLocation(shader, "rotatedCorner");
@@ -124,8 +153,21 @@ class SpriteManager{
         }
     }
 
+    EnableDrawConditions(gl){
+        gl.disable(gl.CULL_FACE);
+        gl.enable(gl.BLEND);
+        gl.depthMask(false);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+    }
+
+    DisableDrawConditions(gl){
+        gl.enable(gl.CULL_FACE);
+        gl.disable(gl.BLEND);
+    }
+
     Draw(gl, view, projection){
         if (!this.shader) this.Init(gl);
+        this.EnableDrawConditions(gl);
         let len = this.sprites.length;
         let newSprites = [];
         for (var i = 0; i < len; i++) {
@@ -135,11 +177,11 @@ class SpriteManager{
                 newSprites.push(s);
             }
         }
- 
+        this.DisableDrawConditions(gl);
         this.sprites = newSprites;
     }
 
-    AddDefault(gl, pos = [0, 10, 0]){
+    AddDefault(gl, pos = [0, 0, 0]){
         let s = new Sprite(gl);
         s.ModifyModelMatrix(new Vector3(pos[0], pos[1], pos[2]));
         this.sprites.push(s);
@@ -156,12 +198,11 @@ class Sprite{
         this.changed = false;
         this.parent = false;
         this.toRemove = false;
-        this.drawCount = 0;
         // attribute data
         this.indices = new Uint16Array([0, 1, 2, 2, 3, 0]);
-        this.corners = new Float32Array([-1, -1, 1, -1, 1, 1, -1, 1]);
+        this.corners = new Float32Array([-.5, -.5, .5, -.5, .5, .5, -.5, .5]);
         this.uvs = new Float32Array([0, 0, 1, 0, 1, 1, 0, 1]);
-        this.positions = new Float32Array([0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0]);
+        this.positions = new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
         this.indicesBuffer = gl.createBuffer();
         this.cornersBuffer = gl.createBuffer();
         this.uvsBuffer = gl.createBuffer();
@@ -173,7 +214,6 @@ class Sprite{
         let q = this.quaternion;
         q.SetEuler(rotation.x, rotation.y, rotation.z);
         s.RotationMatrix(q);
-
         return modelMatrix.Mul(s);
     }
 
