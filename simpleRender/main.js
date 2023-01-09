@@ -269,7 +269,7 @@ function addRandomObject(){
 window.setInterval(changeObjects, 2000);
 
 function changeObjects(){
-  
+ 
 }
 
 function drawMeshes(gl, mat){
@@ -283,6 +283,9 @@ function drawMeshes(gl, mat){
 function drawRandomObjects(gl, mat){
   for(var i = 0;i<__randomObjects.length;i++){
     let obj = __randomObjects[i];
+    if(!obj.yRot) obj.yRot = 0;
+    obj.yRot++;
+    obj.ModifyModelMatrix(obj.pos, new Vector3(0, obj.yRot, obj.yRot));
     obj.DrawWireFrame(gl, mat, obj.color);
   }
 }
@@ -447,7 +450,7 @@ const addFloorBlocks = () =>{
   var dim = 10;
   for(var i =0;i<dim;i++){
     for(var j=0;j<dim;j++){
-      addBlock(1,1,1, [-(dim/2)+i, -2, -(dim/2)+j])
+      addBlock(1,1,1, [-(dim/2)+i, -1, -(dim/2)+j])
     }
   }
 }
