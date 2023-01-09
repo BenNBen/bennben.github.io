@@ -66,7 +66,7 @@ mouseButtonRight = 3;
 clickX = false;
 clickY = false;
 function screenRatio(){
-  var canvas = document.getElementById('screen');
+  let canvas = document.getElementById('screen');
   return canvas.width/screen.width;
 }
 
@@ -87,6 +87,7 @@ function release(event, id){
 }
 
 function touchMove(event, id){
+  event.preventDefault();
   var ratio = screenRatio();
   let touches = event.touches;
   var x = touches[0].pageX * ratio;
@@ -401,9 +402,9 @@ const adjustCube = () =>{
 window.setInterval(adjustCube, 33);
 
 function resize() {
-  var width = window.innerWidth;
-  var height = window.innerHeight;
-  var context = gl
+  let width = window.innerWidth;
+  let height = window.innerHeight;
+  let context = gl;
   devicePixelRatio = window.devicePixelRatio || 1,
     backingStoreRatio = context.webkitBackingStorePixelRatio ||
     context.mozBackingStorePixelRatio ||
@@ -412,14 +413,24 @@ function resize() {
     context.backingStorePixelRatio || 1,
 
   ratio = devicePixelRatio / backingStoreRatio;
-  autoResFullWidth = width * devicePixelRatio
-  autoResFullHeight = height * devicePixelRatio
-  autoResLogicalWidth = width
-  autoResLogicalHeight = height
-  gl.canvas.width = Math.ceil(autoResFullWidth);
-  gl.canvas.height = Math.ceil(autoResFullHeight);
+  let autoResFullWidth = width / ratio;
+  let autoResFullHeight = height / ratio;
+  let autoResLogicalWidth = width;
+  let autoResLogicalHeight = height;
+  gl.canvas.width = window.innerWidth;
+  gl.canvas.height = window.innerHeight;
+  canvas.width = autoResFullWidth;
+  canvas.height = autoResFullHeight;
   gl.canvas.style.width = autoResLogicalWidth + 'px';
   gl.canvas.style.height = autoResLogicalHeight + 'px';
+  if(Math.abs(window.orientation) === 90){
+    gl.canvas.width = window.innerHeight;
+    gl.canvas.height = window.innerWidth;
+    canvas.width = autoResFullHeight;
+    canvas.height = autoResFullWidth;
+    gl.canvas.style.width = autoResLogicalHeight + 'px';
+    gl.canvas.style.height = autoResLogicalWidth + 'px';
+  }
 }
 
 const addSprites = (gl) =>{

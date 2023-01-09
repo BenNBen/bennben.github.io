@@ -55,7 +55,6 @@ class App{
         gl.enable(gl.CULL_FACE);
         gl.enable(gl.DEPTH_TEST);
         gl.clearColor(28/255, 79/255, 110/255, 1.0);
-
         this.SetView(gl.drawingBufferWidth, gl.drawingBufferHeight, 0);
         this.viewFrustrum.frustrumFromMatrix(this.modelMatrix.data);
         this.grid.draw(gl, this.projectionMatrix, this.modelMatrix);

@@ -149,7 +149,7 @@ class Player extends GameObject{
         this.dimension = o.dimension || 32;
         this.turnSpeed = 0;
         this.turnSpeed = 0;
-        this.maxTurnSpeed = 5;
+        this.maxTurnSpeed = 2.5;
         this.moving = false;
         this.rotatingR = false;
         this.rotatingL = false;
@@ -286,6 +286,11 @@ class Player extends GameObject{
 
     StopRotateLeft() {
         this.rotatingL = false;
+    }
+
+    SingleFire(){
+        console.debug("FIRE")
+        FireBullet();
     }
 
     Firing(){
@@ -487,6 +492,34 @@ onKeyUp = (e) => {
     }
 }
 
+THUMB_PRESSED = false;
+THUMB_OFFSETS = [0, 0];
+FIRE_THUMB = [0, 0];
+const drawControls = (ctx) =>{
+    let mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
+    if (!mobile) return;
+    let w = ctx.canvas.width;
+    let h = ctx.canvas.height;
+    ctx.fillStyle = "rgba(200, 200, 200, .5)";
+    ctx.strokeStyle = "white";
+    ctx.beginPath();
+    let radius = 32;
+    if(THUMB_PRESSED) radius *= 2;
+    ctx.arc(w * .075 + THUMB_OFFSETS[0], h*.875 + THUMB_OFFSETS[1], radius, 0, 2 * Math.PI);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    let fb = document.getElementById("fireButton");
+    let fx = w * .925;
+    let fy = h * .875;
+    ctx.beginPath();
+    ctx.fillStyle = "rgba(255, 0, 0, .8)";
+    ctx.arc(fx, fy, 64, 0, 2 * Math.PI);
+    ctx.fill();
+    FIRE_THUMB = [fx, fy];
+}
+
 const renderCanvas = () => {
     var ctx = clearCanvas();
     drawCanvasGrid(ctx, ctx.canvas.width, ctx.canvas.height);
@@ -509,12 +542,97 @@ const renderCanvas = () => {
         ctx.filter = 'none';
         ctx.globalAlpha = 1;
         drawPaused(ctx);
+    }else{
+        drawControls(ctx);
     }
     UserScore.Draw(ctx);
     if(GLOB_DEBUG){
         Stats.Draw(ctx);
     }
     window.requestAnimationFrame(renderCanvas);
+}
+
+const checkThumbOffsets = () =>{
+    let mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)
+    if(!mobile) return;
+    if(THUMB_OFFSETS[1] < 0){
+        PlayerShip.Forward();
+    }else{
+        PlayerShip.StopForward();
+    }
+    if(THUMB_OFFSETS[0] > 16){
+        PlayerShip.RotateRight();
+        PlayerShip.StopRotateLeft();
+    }else if(THUMB_OFFSETS[0] < -16){
+        PlayerShip.RotateLeft();
+        PlayerShip.StopRotateRight();
+    }else if(Math.abs(THUMB_OFFSETS[0]) < 16){
+        PlayerShip.StopRotateLeft();
+        PlayerShip.StopRotateRight();
+    }
+}
+
+window.setInterval(checkThumbOffsets, 100);
+
+const touchMove = (event, id) =>{
+    event.preventDefault();
+    let touches = event.touches;
+    var x = touches[0].pageX;
+    var y = canvas.height - touches[0].pageY;
+    let width = canvas.width;
+    let height = canvas.height;
+    if (window.orientation === 90) { //portrait
+        height = canvas.width;
+        width = canvas.height;
+    }
+    if (y <= Math.floor(height * .25) && x <= Math.floor(width * .25)) {
+        let midX = Math.floor(width * .1);
+        let midY = Math.floor(height * .1);
+        let diffX = x - midX;
+        let diffY = y - midY;
+        THUMB_OFFSETS[0] = (diffX / midX) * 32;
+        THUMB_OFFSETS[1] = -1 * (diffY / midY) * 32;
+        THUMB_PRESSED = true;
+        return;
+    }else if (Math.abs(x - FIRE_THUMB[0]) < 200 && Math.abs(touches[0].pageY - FIRE_THUMB[1]) < 200) {
+        PlayerShip.Firing();
+        return;
+    }
+}
+
+const touchStart = (event, id) =>{
+    event.preventDefault();
+    
+    let touches = event.touches;
+    var x = touches[0].pageX;
+    var y = canvas.height - touches[0].pageY;
+    let width = canvas.width;
+    let height = canvas.height;
+    if (window.orientation === 90) { //portrait
+        height = canvas.width;
+        width = canvas.height;
+    }
+    if (y <= Math.floor(height * .2) && x <= Math.floor(width*.2)) {
+        let midX = Math.floor(width * .1);
+        let midY = Math.floor(height *.1);
+        let diffX = x - midX;
+        let diffY = y - midY;
+        THUMB_OFFSETS[0] = (diffX / midX) * 32;
+        THUMB_OFFSETS[1] = -1 * (diffY / midY) * 32;
+        THUMB_PRESSED = true;
+        return;
+    }else if(Math.abs(x-FIRE_THUMB[0]) < 200 && Math.abs(touches[0].pageY-FIRE_THUMB[1]) < 200) {
+        PlayerShip.Firing();
+        return;
+    }
+    THUMB_PRESSED = false;
+}
+
+const touchEnd = (event, id) =>{
+    event.preventDefault();
+    THUMB_PRESSED = false;
+    THUMB_OFFSETS = [0, 0];
+    PlayerShip.StopFiring();
 }
 
 
@@ -525,4 +643,6 @@ renderCanvas();
 
 window.addEventListener('keydown', onKeyDown);
 window.addEventListener('keyup', onKeyUp);
-window.addEventListener('touchmove', onKeyUp);
+canvas.addEventListener("touchstart", touchStart, false);
+canvas.addEventListener("touchend", touchEnd, false);
+canvas.addEventListener("touchmove", touchMove, false);

@@ -10,6 +10,14 @@
              position:absolute;
              left:2.5%;
              top:2.5%;
+             z-index: 0;
+        }
+        button{
+            position:absolute;
+            left:80%;
+            bottom:10%;
+            z-index: 1;
+            visibility: hidden;
         }
     </style>
     <script src="../src/canvasUtils.js" defer></script>
@@ -24,8 +32,8 @@
 </head>
 <body bgcolor="black">
     <canvas id="canvas">
-
     </canvas>
+    <button id="fireButton" class="fireButton" onclick="PlayerShip.SingleFire()">FIRE</button>
 </body>
 
 </html>
