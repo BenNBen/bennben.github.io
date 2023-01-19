@@ -151,6 +151,7 @@ function hover(event, id){
 function keydown(kevent){
   if(kevent.code === "KeyA"){
     addRandomObject();
+    spriteManager.sprites[2].texturePath = "spriteTextures/star.png"
   }
   if(kevent.code === "F9"){
     rotationAround = !rotationAround;

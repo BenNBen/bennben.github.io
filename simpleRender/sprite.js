@@ -207,6 +207,7 @@ class Sprite{
         this.cornersBuffer = gl.createBuffer();
         this.uvsBuffer = gl.createBuffer();
         this.posBuffer = gl.createBuffer();
+        this.texturePath = false;
     }
 
     RotateMatrix(rotation, modelMatrix) {
@@ -235,6 +236,12 @@ class Sprite{
         return [mv, mvp];
     }
 
+    LoadTexture(gl, path, defaultTexture){
+        let tex = loadTexture(gl, path);
+        if(tex) return tex;
+        return defaultTexture;
+    }
+
     Draw(gl, view, projection){
         if(!this.parent) return;
         let parent = this.parent;
@@ -244,6 +251,9 @@ class Sprite{
         let attributes = parent.attributes;
         let cameraRatio = [1, 1];
         let texture = parent.defaultTexture;
+        if(this.texturePath){
+            texture = this.LoadTexture(gl, this.texturePath, texture);
+        }
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.uniform1i(locations.texturemap, 0);
