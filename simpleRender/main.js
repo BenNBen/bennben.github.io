@@ -1,4 +1,3 @@
-
 function matrixTimesVector3(ovector, m, vector) {
   var v1 = vector[0];
   var v2 = vector[1];
@@ -151,7 +150,6 @@ function hover(event, id){
 function keydown(kevent){
   if(kevent.code === "KeyA"){
     addRandomObject();
-    spriteManager.sprites[2].texturePath = "spriteTextures/star.png"
   }
   if(kevent.code === "F9"){
     rotationAround = !rotationAround;
@@ -437,13 +435,34 @@ function resize() {
   }
 }
 
+const checkSlider = () => {
+  let slider = document.getElementById('myRange');
+  let val = slider.value;
+  if(val < 10) val = 10;
+  val /= 100;
+  spriteManager.sprites[spriteManager.sprites.length-1].timeToDraw = 20000 * val;
+  console.debug(spriteManager.sprites[spriteManager.sprites.length - 1].timeToDraw)
+}
+
 const addSprites = (gl) =>{
-    for(let i = 0; i < 5; i++){
-        let s = spriteManager.AddDefault(gl, [-2 + i, i, 0]);
+    let images = ["window.png", "circle.png", "ben.jfif"];
+
+    for(let i = 0; i < 3; i++){
+        let s = spriteManager.AddDefault(gl, [-2 + i, i+1, 0]);
         if(i %2 == 0){
           s.color = [1/i,0,1/i]
         }
+      s.texturePath = `/simpleRender/spriteTextures/${images[i]}`;
     }
+    
+    let s = new AnimatedSprite(gl);
+    s.rownum = 11;
+    s.colnum = 12;
+    s.ModifyModelMatrix(new Vector3(0, 5, 0), new Vector3(0,0,0), new Vector3(2.5,2.5,2.5));
+    spriteManager.sprites.push(s);
+    s.parent = spriteManager;
+    s.texturePath = "/simpleRender/spriteTextures/redhood.png";
+    window.setInterval(checkSlider, 250);
 }
 
 
@@ -455,6 +474,7 @@ const addFloorBlocks = () =>{
     }
   }
 }
+
 function postRedisplay(){
   
 }

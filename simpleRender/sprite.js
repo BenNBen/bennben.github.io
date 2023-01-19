@@ -208,6 +208,7 @@ class Sprite{
         this.uvsBuffer = gl.createBuffer();
         this.posBuffer = gl.createBuffer();
         this.texturePath = false;
+        this.texture = false;
     }
 
     RotateMatrix(rotation, modelMatrix) {
@@ -252,7 +253,10 @@ class Sprite{
         let cameraRatio = [1, 1];
         let texture = parent.defaultTexture;
         if(this.texturePath){
-            texture = this.LoadTexture(gl, this.texturePath, texture);
+            if(!this.texture){
+                this.texture = this.LoadTexture(gl, this.texturePath, texture);
+            }
+            texture = this.texture;
         }
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, texture);
